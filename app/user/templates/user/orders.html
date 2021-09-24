@@ -1,0 +1,59 @@
+{%include "base.html" %}
+{% block header %}
+<link rel="stylesheet" href="/static/css/cart.css" type="text/css" />
+{% endblock %}
+
+<div class="sub-title">
+    <h3><b>Orders History</b></h3>
+</div>
+
+{% for order_idx in orders %}
+{% set order=orders[order_idx] %}
+<div class="card">
+    <div class="row">
+        <div class="col-md-12 card-product-list">
+            <div class="title">
+                <div class="row">
+                    <div class="col">
+                        <h4><b>Order ID: {{order_idx}}</b></h4>
+                    </div>
+                    <div class="col align-self-center text-right text-muted">
+                        <span class="total-items">{{order_details[order_idx]|length}}</span> items
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+
+            </div>
+            {% for item_id in order_details[order_idx] %}
+            {% set order_partial=order_details[order_idx][item_id] %}
+            <div class="row border-top border-bottom">
+                <div class="row main align-items-center product">
+                    <div class="col-3">
+                        <a href="/products/{{ item_id }}" class="img-wrap">
+                            <img class="img-fluid item-img" src="{{items[item_id].imUrl}}">
+                        </a>                        
+                    </div>
+                    <div class="col-5">
+                        <div class="row text-muted">{{items[item_id].brand}}</div>
+                        <a href="/products/{{ item_id }}">
+                            <div class="row">{{items[item_id].title}}</div>
+                        </a>
+                    </div>
+                    <div class="col-1">&dollar; <span class="price">{{ order_partial.price }}</span></div>
+                    <div class="col-2"> 
+                        <input id="quantity" type="number" min=1 class="border quantity input" value={{order_partial.quantity|int}} readonly/>
+                    </div>
+                    <div class="col-1">&dollar; <span class="subtotal">{{order_partial.subTotal}}</span></div>
+                </div>
+            </div>
+            {% endfor %}
+            <div class="row">
+                <div class="col-12">
+                    <h5 class="float-right"><b>Total: ${{order.totalPrice}}</b></h5>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}

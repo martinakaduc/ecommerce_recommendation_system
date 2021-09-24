@@ -1,0 +1,46 @@
+{% include "base.html" %}
+
+<section class="section-content">
+<div class="container">
+
+<header class="section-heading">
+  <h6 class="section-title text-primary"> 
+    {% set base_url = "/products/recommendation?" %}
+    <a href="{{ base_url }}">Recommendation</a>
+    > <a href="/products/recommendation?rtype={{title|lower|replace(' ','_')}}">{{ title }}</a>
+  </h6>
+</header><!-- sect-heading -->
+
+{% for i in range(products|length // 4 + 1) %}
+<div class="row">
+	{% for j in range(4) %}
+  {% set idx = i * 4 + j %}
+  {% if idx < products|length %}
+  <div class="col-md-3">
+    <div href="/products/{{ products[idx][0].itemId }}" class="card card-product-grid" style="height: 96%; margin-bottom: 0%; padding-bottom: 5%;">
+      <a href="/products/{{ products[idx][0].itemId }}" class="img-wrap"> <img src="{{ products[idx][0].imUrl }}" class="w-100	"> </a>
+      <figcaption class="info-wrap" style="display: flex; flex-direction: column; height: 60%;">
+        <a href="/products/{{ products[idx][0].itemId }}" class="title">{{ products[idx][0].title}}</a>
+        <div class="rating-wrap">
+          <ul class="rating-stars">
+            <li style="width:{{ products[idx][0].reviewOverall * 100 / 5 | int  }}%" class="stars-active"> 
+              <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i>
+            </li>
+            <li>
+              <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i> 
+            </li>
+          </ul>
+          <span class="label-rating text-muted">{{ products[idx][1] }} reviews</span>
+        </div>
+        <div class="price mt-1">${{products[idx][0].price | safe}}</div> <!-- price-wrap.// -->
+      </figcaption>
+    </div>
+  </div>
+  {% endif %}
+  {% endfor %}
+</div> <!-- row.// -->
+{% endfor %}
+</div> <!-- container .//  -->
+
+</section>
+<!-- Pagination -->

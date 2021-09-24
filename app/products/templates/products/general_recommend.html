@@ -1,0 +1,44 @@
+{% include "base.html" %}
+
+<!-- ========================= SECTION CONTENT ========================= -->
+{% for rtype in recommend_products %}
+{% set products = recommend_products[rtype] %}
+<section class="section-content">
+<div class="container">
+
+<header class="section-heading">
+  <a href="/products/recommendation?rtype={{rtype|lower|replace(' ','_')}}" class="btn btn-outline-primary float-right">See all</a>
+  <h3 class="section-title">{{rtype}}</h3>
+</header><!-- sect-heading -->
+
+  
+<div class="row">
+  {% for product in products %}
+  <div class="col-md-3">
+    <div href="/products/{{ product[0]['itemId'] }}" class="card card-product-grid">
+      <a href="/products/{{ product[0]['itemId'] }}" class="img-wrap"> <img src="{{ product[0]['imUrl'] }}"> </a>
+      <figcaption class="info-wrap">
+        <a href="/products/{{ product[0]['itemId'] }}" class="title">{{ product[0]['name'] }}</a>
+        
+        <div class="rating-wrap">
+          <ul class="rating-stars">
+            <li style="width:{{ product[0]['reviewOverall'] * 100 / 5 | int  }}%" class="stars-active"> 
+              <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i>
+            </li>
+            <li>
+              <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i> 
+            </li>
+          </ul>
+          <span class="label-rating text-muted">{{ product[1] }} reviews</span>
+        </div>
+        <div class="price mt-1">${{ product[0]['price'] }}</div> <!-- price-wrap.// -->
+      </figcaption>
+    </div>
+  </div> <!-- col.// -->
+  {% endfor %}
+</div> <!-- row.// -->
+
+</div> <!-- container .//  -->
+</section>
+{% endfor %}
+<!-- ========================= SECTION CONTENT END// ========================= -->

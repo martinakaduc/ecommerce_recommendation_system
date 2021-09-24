@@ -1,0 +1,280 @@
+{% include "base.html" %}
+{% block header %}
+<link href="https://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet" type="text/css"/>
+{% endblock %}
+
+<div class="container mt-5 ">
+<div class="card">
+  <div class="row">
+    <aside class="col-sm-5 border-right">
+<article class="gallery-wrap"> 
+<div class="img-big-wrap">
+  <div> <a href="#"><img src="{{ product.imUrl }}"></a></div>
+</div> <!-- slider-product.// -->
+</article> <!-- gallery-wrap .end// -->
+    </aside>
+    <aside class="col-sm-7">
+<article class="card-body p-5">
+  <h6 class="title mb-3 text-muted">{{ product.brand }}</h6>
+  <h3 class="title mb-3">{{ product.title }}</h3>
+
+<div class="rating-wrap">
+  <ul class="rating-stars">
+    <li style="width:{{ product.reviewOverall * 100 / 5 | int  }}%" class="stars-active"> 
+      <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i>
+    </li>
+    <li>
+      <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i> 
+    </li>
+  </ul>
+</div>
+
+<p class="price-detail-wrap"> 
+  <span class="price h3 text-primary"> 
+    <span class="currency">US </span><span class="num">${{ product.price | safe }}</span>
+  </span> 
+</p> <!-- price-detail-wrap .// -->
+
+<dl class="item-property">
+  <dt>Description</dt>
+  <dd><p>{{ product.description | safe }}</p></dd>
+
+{%  if "username" in session %}
+<hr>
+  <div class="row">
+    <div class="col-sm-5">
+      <dl class="param param-inline">
+        <dt>Quantity: </dt>
+        <dd>
+          <div class="input">
+            <span class="btn btn-sm btn-outline-gray" onclick="decrementValue()">-</span>
+            <input class="quantity" id="quantity" name="quantity" value='1' />
+            <span class="btn btn-sm btn-outline-gray" onclick="incrementValue()">+</span>
+        </div>
+        </dd>
+      </dl>  <!-- item-property .// -->
+    </div> <!-- col.// -->
+    
+    <!--
+    <div class="col-sm-7">
+      <dl class="param param-inline">
+          <dt>Size: </dt>
+          <dd>
+            <label class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2">
+            <span class="form-check-label">SM</span>
+          </label>
+          <label class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2">
+            <span class="form-check-label">MD</span>
+          </label>
+          <label class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2">
+            <span class="form-check-label">XXL</span>
+          </label>
+          </dd>
+      </dl> 
+    </div> -->
+    
+  </div> <!-- row.// -->
+  <hr>
+  <button onclick="buyNow()" class="btn btn-lg btn-primary text-uppercase"> Buy now </button>
+  <button onclick="addToCart()" class="btn btn-lg btn-outline-primary text-uppercase"> <i class="fas fa-shopping-cart"></i> Add to cart </button>
+  {% endif %}
+</article> <!-- card-body.// -->
+    </aside> <!-- col.// -->
+  </div> <!-- row.// -->
+</div> <!-- card.// -->
+</div>
+
+<hr>
+<div style="width: 100%; max-width: 950px; margin:auto;">
+  <h2 class="text-center">Reviews</h2>
+</div>
+
+{% if review_access %}
+<div class="container">
+	<div class="row" style="margin-top:40px; margin-bottom: 40px;">
+		<div class="col-md-12">
+    	<div class="well well-sm">
+            <div class="float-right">
+                <a class="btn btn-success btn-green" href="#reviews-anchor" id="open-review-box">Leave a Review</a>
+            </div>
+            <div class="row" id="post-review-box" style="display:none;">
+                <div class="col-md-12">
+                    <form accept-charset="UTF-8">
+                      <fieldset class="rating"> 
+                        <input type="radio" id="star5" name="rating" value="5" />
+                        <label class="fa fa-star full" for="star5" title="Awesome - 5 stars"></label> 
+                        <input type="radio" id="star4half" name="rating" value="4.5" />
+                        <label class="fa fa-star-half-o half" for="star4half" title="Pretty good - 4.5 stars"></label> 
+                        <input type="radio" id="star4" name="rating" value="4" />
+                        <label class="fa fa-star full" for="star4" title="Pretty good - 4 stars"></label> 
+                        <input type="radio" id="star3half" name="rating" value="3.5" />
+                        <label class="fa fa-star-half-o half" for="star3half" title="Meh - 3.5 stars"></label> 
+                        <input type="radio" id="star3" name="rating" value="3" />
+                        <label class="fa fa-star full" for="star3" title="Meh - 3 stars"></label> 
+                        <input type="radio" id="star2half" name="rating" value="2.5" />
+                        <label class="fa fa-star-half-o half" for="star2half" title="Kinda bad - 2.5 stars"></label> 
+                        <input type="radio" id="star2" name="rating" value="2" />
+                        <label class="fa fa-star full" for="star2" title="Kinda bad - 2 stars"></label> 
+                        <input type="radio" id="star1half" name="rating" value="1.5" />
+                        <label class="fa fa-star-half-o half" for="star1half" title="Meh - 1.5 stars"></label> 
+                        <input type="radio" id="star1" name="rating" value="1" />
+                        <label class="fa fa-star full" for="star1" title="Sucks big time - 1 star"></label> 
+                        <input type="radio" id="starhalf" name="rating" value="0.5" />
+                        <label class="fa fa-star-half-o half" for="starhalf" title="Sucks big time - 0.5 stars"></label> 
+                        <input type="radio" class="reset-option" name="rating" value="reset" /> 
+                      </fieldset>
+
+                      <textarea class="form-control animated" cols="50" id="reviewText" name="comment" placeholder="Enter your review here..." rows="5"></textarea>
+      
+                      <div class="text-right">
+                          <button class="btn btn-danger btn-md" id="close-review-box" style="display:none; margin-right: 10px;">Cancel</button>
+                          <button class="btn btn-success btn-md" type="button" id="review-submit">Save</button>
+                      </div>
+                    </form>
+                </div>
+            </div>
+        </div> 
+         
+		</div>
+	</div>
+</div>
+{% endif %}
+
+<div class="container">
+	<div class="card">
+	    <div class="card-body">
+        <br>
+        {% for user, review in user_reviews %}
+        <hr>
+	        <div class="row">
+        	    <div class="col-md-2">
+        	        <img src="https://image.ibb.co/jw55Ex/def_face.jpg" class="img img-rounded img-fluid"/>
+        	        <p class="text-secondary text-center">{{review.reviewTime}}</p>
+        	    </div>
+        	    <div class="col-md-10">
+        	        <p>
+        	            <strong>{{user.name}}</strong>
+        	       </p>
+                 <span class="rating-wrap">
+                  <ul class="rating-stars">
+                    <li style="width:{{ review.overall * 100 / 5 | int  }}%" class="stars-active"> 
+                      <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i>
+                    </li>
+                    <li>
+                      <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i> 
+                    </li>
+                  </ul>
+                </span>
+        	       <div class="clearfix"></div>
+        	        <p>{{review.reviewText}}</p>
+                  <button class="float-right btn btn-outline-primary ml-2"> <i class="fa fa-reply"></i> Reply</button>
+                  <button class="float-right btn btn-outline-danger"> <i class="fa fa-heart"></i> Like</button>
+        	    </div>
+	        </div>
+          <hr>
+          <br>
+        {% endfor %}
+	    </div>
+	</div>
+</div>
+
+<div style="padding: 10%;">
+</div>
+
+{%  if "username" in session %}
+<script>
+
+  var reviewBox = $('#post-review-box');
+  var newReview = $('#reviewText');
+  var openReviewBtn = $('#open-review-box');
+  var closeReviewBtn = $('#close-review-box');
+
+  openReviewBtn.click(function(e)
+  {
+    reviewBox.slideDown(400, function()
+      {
+        $('#reviewText').trigger('autosize.resize');
+        newReview.focus();
+      });
+    openReviewBtn.fadeOut(100);
+    closeReviewBtn.show();
+  });
+
+  closeReviewBtn.click(function(e)
+  {
+    e.preventDefault();
+    reviewBox.slideUp(300, function()
+      {
+        newReview.focus();
+        openReviewBtn.fadeIn(200);
+      });
+    closeReviewBtn.hide();
+    
+  });
+
+  $('#review-submit').click(function() {
+      var rating = $("input[name='rating']:checked").val()
+      var reviewText = $("#reviewText").val()
+      $.ajax({
+          url: "/products/{{ product.itemId }}/review",
+          type: 'POST',
+          data: {
+              rating: rating,
+              reviewText: reviewText
+          },
+          success: function(status) {
+            if (status["result"]) {
+              alert('Your option has been recorded!');
+              window.location.reload();
+            } else {
+              alert('Something went wrong. Please try again!');
+            }
+          }               
+      });
+  });
+
+  function addToCart() {
+    var quantity = parseInt(document.getElementById("quantity").value)
+    var data = {itemId: "{{ product.itemId }}", quantity: quantity}
+    $.post("/cart/add", data, function(status) {
+      if (status["result"]) {
+        updateCart()
+        alert("Added items successfully!");
+      } else {
+        alert("Something went wrong. Please try again!");
+      }
+    });
+  }
+
+  function buyNow() {
+    var quantity = parseInt(document.getElementById("quantity").value)
+    var data = {itemId: "{{ product.itemId }}", quantity: quantity}
+    $.post("/cart/add", data, function(status) {
+      if (status["result"]) {
+        updateCart()
+        window.location.href = "/cart/view";
+      } else {
+        alert("Something went wrong. Please try again!");
+      }
+    });
+  }
+
+  function incrementValue() {
+    var value = parseInt(document.getElementById('quantity').value, 10);
+    value = isNaN(value) ? 0 : value;
+    value++;
+    document.getElementById('quantity').value = value;
+  }
+
+  function decrementValue() {
+      var value = parseInt(document.getElementById('quantity').value, 10);
+      value = isNaN(value) ? 0 : value;
+      value--;
+      value = (value < 0) ? 0 : value;
+      document.getElementById('quantity').value = value;
+  }
+</script>
+{% endif %}

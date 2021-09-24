@@ -1,0 +1,192 @@
+{%include "base.html" %}
+{% block header %}
+<link rel="stylesheet" href="/static/css/cart.css" type="text/css" />
+{% endblock %}
+
+<div class="card">
+    <div class="row">
+        <div class="col-md-8 cart">
+            <div class="title">
+                <div class="row">
+                    <div class="col">
+                        <h4><b>Shopping Cart</b></h4>
+                    </div>
+                    <div class="col align-self-center text-right text-muted">
+                        <span class="total-items">0</span> items
+                    </div>
+                </div>
+            </div>
+            {% for order in orders %}
+            <div class="row border-top border-bottom item-row" id="{{ products[loop.index-1].itemId }}">
+                <div class="row main align-items-center product">
+                    <div class="col-2">
+                        <a href="/products/{{ products[loop.index-1].itemId }}" class="img-wrap">
+                            <img class="img-fluid item-img" src="{{products[loop.index-1].imUrl}}">
+                        </a>                        
+                    </div>
+                    <div class="col-5">
+                        <div class="row text-muted">{{products[loop.index-1].brand}}</div>
+                        <a href="/products/{{ products[loop.index-1].itemId }}">
+                            <div class="row">{{products[loop.index-1].title}}</div>
+                        </a>
+                    </div>
+                    <div class="col">&dollar; <span class="price">{{ order.price }}</span></div>
+                    <div class="col"> 
+                        <input type="number" min=1 class="border quantity input" value={{order.quantity|int}} />
+                    </div>
+                    <div class="col">&dollar; <span class="subtotal">{{order.subTotal}}</span></div>
+                    <div><span class="close">&#10005;</span></div>
+                </div>
+            </div>
+            {% endfor %}
+            <div class="back-to-shop"><a onclick="window.history.back()">&leftarrow; <span class="text-muted">Back to shop</span></a></div>
+        </div>
+        <div class="col-md-4 summary">
+            <div>
+                <h5><b>Summary</b></h5>
+            </div>
+            <hr>
+            <div class="row">
+                <div class="col" style="padding-left:0;"><span class="total-items">0</span> ITEMS</div>
+                <div class="col text-right">&dollar; <span class="final-value" id="cart-subtotal">0.00</span></div>
+            </div>
+            <form>
+                <p>SHIPPING</p> 
+                <select id="shipping">
+                    <option class="text-muted" value=0.00 selected>Standard-Delivery- &dollar;0.00</option>
+                </select>
+                <p>GIFT CODE</p> <input id="code" placeholder="Enter your code">
+            </form>
+            <div class="row" style="border-top: 1px solid rgba(0,0,0,.1); padding: 2vh 0;">
+                <div class="col">TOTAL PRICE</div>
+                <div class="col text-right">&dollar; <span class="final-value" id="cart-total">0.00</span></div>
+            </div>
+            <button onclick="updateCartItems()" class="btn btn-md btn-outline-primary text-uppercase" style="float: right; margin-top: 5px;">UPDATE CART</button>
+            <button onclick="checkout()" class="btn btn-md btn-primary text-uppercase checkout-cta" style="float: right; margin-top: 5px;">CHECKOUT</button>
+        </div>
+    </div>
+</div>
+<div style="padding: 10%;">
+</div>
+
+<script>
+    var fadeTime = 300;
+
+    $(document).ready(function() {
+        // jQuery code
+        updateSumItems()
+        recalculateCart()
+    }); 
+
+    function updateCartItems() {
+        var data = {};
+        $('.item-row').each((index, elem) => {
+            data[elem.id]= parseInt($(elem).find(".quantity").val());
+        });
+
+        $.post("/cart/update", data, function(status) {
+            if (status["result"]) {
+                alert("Successfully update!");
+            } else {
+                alert("Something went wrong. Please try again!");
+            }
+        });
+    }
+
+    function checkout() {
+        var data = {}
+        $.post("/cart/checkout", data, function(status) {
+            if (status["result"]) {
+                alert("Successfully checkout!");
+                window.location.href = "/";
+            } else {
+                alert("Something went wrong. Please try again!");
+            }
+        });
+    }
+
+    /* Assign actions */
+    $('.quantity').change(function() {
+        updateQuantity(this);
+    });
+
+    $('.close').click(function() {
+        removeItem(this);
+    });
+
+    function updateQuantity(quantityInput) {
+        /* Calculate line price */
+        var productRow = $(quantityInput).parent().parent();
+        var price = parseFloat(productRow.find('.price').text());
+        var quantity = $(quantityInput).val();
+        var linePrice = price * quantity;
+
+        /* Update line price display and recalc cart totals */
+        productRow.find('.subtotal').each(function() {
+            $(this).fadeOut(fadeTime, function() {
+            $(this).text(linePrice.toFixed(2));
+            recalculateCart();
+            $(this).fadeIn(fadeTime);
+            });
+        });
+
+        updateSumItems();
+    }
+
+    function recalculateCart(onlyTotal) {
+        var subtotal = 0;
+
+        /* Sum up row totals */
+        $('.product').each(function() {
+            subtotal += parseFloat($(this).find('.subtotal').text());
+        });
+
+        /* Caculate shiping*/
+        var shipping = parseFloat($('#shipping').find(":selected").val());
+
+        /* Calculate totals */
+        var total = 0;
+        if (subtotal > 0) {
+            total = subtotal + shipping;
+        }
+
+        /*If switch for update only total, update only total display*/
+        if (onlyTotal) {
+            /* Update total display */
+            $('.final-value').fadeOut(fadeTime, function() {
+            $('#cart-total').html(total.toFixed(2));
+            $('.final-value').fadeIn(fadeTime);
+            });
+        } else {
+            /* Update summary display. */
+            $('.final-value').fadeOut(fadeTime, function() {
+            $('#cart-subtotal').html(subtotal.toFixed(2));
+            $('#cart-total').html(total.toFixed(2));
+            if (total == 0) {
+                $('.checkout-cta').fadeOut(fadeTime);
+            } else {
+                $('.checkout-cta').fadeIn(fadeTime);
+            }
+            $('.final-value').fadeIn(fadeTime);
+            });
+        }
+    }
+
+    function updateSumItems() {
+        var sumItems = 0;
+        $('.quantity').each(function() {
+            sumItems += parseInt($(this).val());
+        });
+        $('.total-items').text(sumItems);
+    }
+
+    function removeItem(removeButton) {
+        var productRow = $(removeButton).parent().parent();
+        productRow.slideUp(fadeTime, function() {
+            productRow.remove();
+            recalculateCart();
+            updateSumItems();
+        });
+    }
+
+</script>

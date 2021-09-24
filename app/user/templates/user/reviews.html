@@ -1,0 +1,51 @@
+{%include "base.html" %}
+{% block header %}
+<link rel="stylesheet" href="/static/css/cart.css" type="text/css" />
+{% endblock %}
+
+<div class="sub-title">
+    <h3><b>Reviews History</b></h3>
+</div>
+
+<div class="card">
+    <div class="row">
+        <div class="col-md-12 card-product-list">
+            {% for product, review in products_reviews %}
+            <div class="row border-top border-bottom">
+                <div class="row main align-items-center product">
+                    <div class="col-3">
+                        <a href="/products/{{ product.itemId }}" class="img-wrap">
+                            <img class="img-fluid item-img" src="{{product.imUrl}}">
+                        </a>                        
+                    </div>
+                    <div class="col-9">
+                        <div class="row text-muted">{{product.brand}}</div>
+                        <a href="/products/{{ product.itemId }}">
+                            <div class="row">{{product.title}}</div>
+                        </a>
+                        <div class="row">
+                            <span class="rating-wrap">
+                                <ul class="rating-stars">
+                                    <li style="width:{{ review.overall * 100 / 5 | int  }}%" class="stars-active"> 
+                                        <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i>
+                                    </li>
+                                    <li>
+                                        <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i> 
+                                    </li>
+                                </ul>
+                            </span>
+                        </div>
+                        <div class="row text-muted">
+                            <p>{{review.reviewTime}}</p>
+                        </div>
+                        <div class="row">
+                            <p>{{review.reviewText}}</p>
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>

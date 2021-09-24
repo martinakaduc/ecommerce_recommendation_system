@@ -1,0 +1,78 @@
+{% include "base.html" %}
+
+<section class="section-content">
+<div class="container">
+
+<header class="section-heading">
+  <h6 class="section-title text-primary"> 
+    {% set base_url = "/products?" %}
+    <a href="{{ base_url }}">Products</a>
+    {% if category > -1 %}
+    > <a href="/products?category={{category}}">{{ title }}</a>
+    {% set base_url = base_url + "category=" + category|string %}
+    {% endif %}
+  </h6>
+</header><!-- sect-heading -->
+
+{% for i in range(products|length // 4 + 1) %}
+<div class="row" >
+	{% for j in range(4) %}
+  {% set idx = i * 4 + j %}
+  {% if idx < products|length %}
+  <div class="col-md-3" >
+    <div href="/products/{{ products[idx][0].itemId }}" class="card card-product-grid" style="height: 96%; margin-bottom: 0%; padding-bottom: 5%;">
+      <a href="/products/{{ products[idx][0].itemId }}" class="img-wrap"> <img src="{{ products[idx][0].imUrl }}" class="w-100	"> </a>
+      <figcaption class="info-wrap" style="display: flex; flex-direction: column; height: 60%;">
+        <a href="/products/{{ products[idx][0].itemId }}" class="title" style="flex-grow: 1;">{{ products[idx][0].title}}</a>
+        <div class="rating-wrap">
+          <ul class="rating-stars">
+            <li style="width:{{ products[idx][0].reviewOverall * 100 / 5 | int  }}%" class="stars-active"> 
+              <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i>
+            </li>
+            <li>
+              <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i> 
+            </li>
+          </ul>
+          <span class="label-rating text-muted">{{ products[idx][1] }} reviews</span>
+        </div>
+        <div class="price mt-1">${{products[idx][0].price | safe}}</div> <!-- price-wrap.// -->
+      </figcaption>
+    </div>
+  </div>
+  {% endif %}
+  {% endfor %}
+</div> <!-- row.// -->
+{% endfor %}
+</div> <!-- container .//  -->
+
+</section>
+<!-- Pagination -->
+<nav aria-label="..."  >
+	<ul class="pagination pagination-sm justify-content-center">
+    <li class="page-item">
+      <a class="page-link" href="{{base_url}}&page=1"><<</a>
+    </li>
+    <li class="page-item">
+      <a class="page-link" href="{{base_url}}&page={{ [current_page - 1, 1]|max }}"><</a>
+    </li>
+    {% for i in range([current_page - 5, 1]|max, [current_page + 10, num_pages+1]|min) %}
+      <li class="page-item mx-1">
+        <a class="page-link" href="{{base_url}}&page={{i}}">
+          {% if i==current_page %}
+            <b>{{i}}</b>
+          {% else %}
+            {{i}}
+          {% endif %}
+        </a>
+      </li>
+    {%endfor %}
+   
+    <li class="page-item">
+      <a class="page-link" href="{{base_url}}&page={{ [current_page+1, num_pages]|min }}">></a>
+    </li>
+    <li class="page-item">
+      <a class="page-link" href="{{base_url}}&page={{ num_pages }}">>></a>
+    </li>
+	</ul>
+</nav>
+<script src="/static/js/pagination.js"> </script>
